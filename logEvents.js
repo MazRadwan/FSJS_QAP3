@@ -25,14 +25,16 @@ const createLogDirectory = async () => {
   return dirPath;
 };
 
-const logEvent = async (message, fileName) => {
-  const logMessage = `${new Date().toISOString()} - ${message}\n`;
+const logEvent = async (message, level, filename) => {
+  const dateTime = `${format(new Date(), "yyyy-MM-dd\tHH:mm:ss")}`;
+  const logMessage = `${dateTime}\t${level}\t${message}\t${uuid()}\n`;
+
   if (global.DEBUG) {
     console.log(logMessage);
   }
 
   const logDirPath = await createLogDirectory();
-  const logFilePath = path.join(logDirPath, fileName);
+  const logFilePath = path.join(logDirPath, filename);
 
   try {
     await fsPromises.appendFile(logFilePath, logMessage);
@@ -42,10 +44,10 @@ const logEvent = async (message, fileName) => {
 };
 
 myEmitter.on("routeAccessed", (route) =>
-  logEvent(`Route accessed: ${route}`, "access.log")
+  logEvent(`Route accessed: ${route}`, "INFO", "access.log")
 );
 myEmitter.on("errorOccurred", (error) =>
-  logEvent(`Error: ${error}`, "error.log")
+  logEvent(`Error: ${error}`, "ERROR", "error.log")
 );
 
 module.exports = myEmitter;
