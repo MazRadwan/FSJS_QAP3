@@ -5,6 +5,7 @@ const routes = require("./routes");
 const myEmitter = require("./logEvents");
 const handleError = require("./errorHandler");
 const sportsService = require("./sportsService");
+const newsService = require("./newsService");
 
 global.DEBUG = true;
 
@@ -53,6 +54,23 @@ const server = http.createServer((req, res) => {
     return;
   } else if (req.url.startsWith("/scripts")) {
     serveStaticFile(path.join(__dirname, req.url), res);
+    return;
+  }
+
+  if (req.url.startsWith("/api/news")) {
+    console.log("Fetching News Data...");
+
+    newsService
+      .getNews()
+      .then((data) => {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(data));
+      })
+      .catch((err) => {
+        console.error("Error fetching news data:", err);
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Failed to fetch news data" }));
+      });
     return;
   }
 
