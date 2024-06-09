@@ -1,25 +1,55 @@
-const NewsAPI = require("newsapi");
-const newsapi = new NewsAPI("7cecf72ce77741969bba4a97e303e0b3"); // Replace 'YOUR_API_KEY' with your actual API key
+document.addEventListener("DOMContentLoaded", () => {
+  const newsContainer = document.querySelector(".news-cards");
 
-const getNews = async () => {
-  try {
-    const response = await newsapi.v2.topHeadlines({
-      country: "ca",
-      category: "general",
-      pageSize: 10,
-    });
-    console.log(response); // Log the entire response to inspect it
-    return response.articles.map((article) => ({
-      title: article.title || "No title available",
-      author: article.author || "Unknown author",
-      urlToImage: article.urlToImage || "path/to/default-image.jpg",
-      publishedAt: article.publishedAt || "Unknown date",
-      content: article.content || "No content available",
-    }));
-  } catch (error) {
-    console.error("Error fetching news:", error);
-    throw error;
-  }
-};
+  const fetchNews = async () => {
+    try {
+      const response = await fetch(
+        "https://newsapi.org/v2/top-headlines?country=us&apiKey=7cecf72ce77741969bba4a97e303e0b3"
+      );
+      const data = await response.json();
+      const articles = data.articles;
 
-module.exports = { getNews };
+      articles.forEach((article) => {
+        const newsCard = document.createElement("div");
+        newsCard.classList.add("news-card");
+
+        const headline = document.createElement("h3");
+        const link = document.createElement("a");
+        link.href = article.url;
+        link.textContent = article.title;
+        link.target = "_blank";
+        headline.appendChild(link);
+
+        newsCard.appendChild(headline);
+
+        if (article.urlToImage) {
+          const image = document.createElement("img");
+          image.src = article.urlToImage;
+          image.alt = article.title;
+          newsCard.appendChild(image);
+        }
+
+        const author = document.createElement("p");
+        author.textContent = `Author: ${article.author || "Unknown"}`;
+        newsCard.appendChild(author);
+
+        const description = document.createElement("p");
+        description.textContent =
+          article.description || "No description available.";
+        newsCard.appendChild(description);
+
+        const publishedAt = document.createElement("p");
+        publishedAt.textContent = `Published At: ${new Date(
+          article.publishedAt
+        ).toLocaleDateString()}`;
+        newsCard.appendChild(publishedAt);
+
+        newsContainer.appendChild(newsCard);
+      });
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    }
+  };
+
+  fetchNews();
+});

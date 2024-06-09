@@ -2,7 +2,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const myEmitter = require("./logEvents");
 const handleError = require("./errorHandler");
-const { getNews } = require("./scripts/news");
+const { getNews } = require("./newsService");
 
 const fetchFile = async (filePath, res, data = null) => {
   try {
@@ -12,11 +12,17 @@ const fetchFile = async (filePath, res, data = null) => {
         .map(
           (article) => `
         <div class="news-article">
-          <h2>${article.title}</h2>
-          <p><strong>Author:</strong> ${article.author}</p>
-          <img src="${article.urlToImage}" alt="${article.title}" />
-          <p><strong>Published At:</strong> ${article.publishedAt}</p>
-          <p>${article.content}</p>
+          <h2><a href="${article.url}" target="_blank">${article.title}</a></h2>
+          <p><strong>Author:</strong> ${article.author || "Unknown"}</p>
+          ${
+            article.urlToImage
+              ? `<img src="${article.urlToImage}" alt="${article.title}" />`
+              : ""
+          }
+          <p><strong>Published At:</strong> ${new Date(
+            article.publishedAt
+          ).toLocaleDateString()}</p>
+          <p>${article.content || "No content available."}</p>
         </div>
       `
         )
