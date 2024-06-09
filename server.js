@@ -4,6 +4,7 @@ const fs = require("fs");
 const routes = require("./routes");
 const myEmitter = require("./logEvents");
 const handleError = require("./errorHandler");
+const sportsService = require("./sportsService");
 
 global.DEBUG = true;
 
@@ -52,6 +53,16 @@ const server = http.createServer((req, res) => {
     return;
   } else if (req.url.startsWith("/scripts")) {
     serveStaticFile(path.join(__dirname, req.url), res);
+    return;
+  }
+
+  // API routes for sports data
+  if (req.url.startsWith("/api/sports/mlb")) {
+    console.log("Fetching MLB Data..."); // Log when fetching data
+    sportsService.fetchMLBData((data) => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(data));
+    });
     return;
   }
 
