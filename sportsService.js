@@ -1,8 +1,8 @@
 const https = require("https");
 
-const fetchMLBData = (callback) => {
+const fetchMLBData = (date, callback) => {
   const API_KEY = "fa257915face43338482a2750621f91a";
-  const url = `https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/2023-06-09?key=${API_KEY}`;
+  const url = `https://api.sportsdata.io/v3/mlb/scores/json/GamesByDate/${date}?key=${API_KEY}`;
 
   const req = https.get(url, (resp) => {
     let data = "";
@@ -10,7 +10,6 @@ const fetchMLBData = (callback) => {
       data += chunk;
     });
     resp.on("end", () => {
-      console.log(data); // Log the data
       callback(JSON.parse(data));
     });
   });

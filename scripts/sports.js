@@ -24,8 +24,16 @@ document.addEventListener("DOMContentLoaded", () => {
       sportsCard.appendChild(title);
 
       const details = document.createElement("p");
-      details.textContent = `Status: ${event.Status} - ${event.DateTime}`;
+      details.textContent = `Status: ${event.Status} - ${new Date(
+        event.DateTime
+      ).toLocaleString()}`;
       sportsCard.appendChild(details);
+
+      const scores = document.createElement("p");
+      const homeScore = event.HomeTeamRuns !== null ? event.HomeTeamRuns : "";
+      const awayScore = event.AwayTeamRuns !== null ? event.AwayTeamRuns : "";
+      scores.textContent = `Scores: ${homeScore} - ${awayScore}`;
+      sportsCard.appendChild(scores);
 
       sportsContainer.appendChild(sportsCard);
     });

@@ -59,7 +59,11 @@ const server = http.createServer((req, res) => {
   // API routes for sports data
   if (req.url.startsWith("/api/sports/mlb")) {
     console.log("Fetching MLB Data..."); // Log when fetching data
-    sportsService.fetchMLBData((data) => {
+
+    // Get current date in YYYY-MM-DD format
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    sportsService.fetchMLBData(currentDate, (data) => {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(data));
     });
