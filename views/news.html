@@ -3,10 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About</title>
+    <title>News</title>
+    <style>
+      .news-article {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+      .news-article img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
   </head>
   <body>
-    <h1>About Us</h1>
-    <p>This is the about page.</p>
+    <header>
+      <h1>Latest News</h1>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/news">News</a></li>
+          <li><a href="/sports">Sports</a></li>
+          <li><a href="/weather">Weather</a></li>
+          <li><a href="/jokes">Jokes</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>{{news}}</main>
   </body>
 </html>
