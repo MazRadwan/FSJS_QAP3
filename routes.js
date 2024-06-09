@@ -2,13 +2,29 @@ const fs = require("fs").promises;
 const path = require("path");
 const myEmitter = require("./logEvents");
 const handleError = require("./errorHandler");
+const { getNews } = require("./scripts/news");
 
-const fetchFile = async (filePath, res) => {
+const fetchFile = async (filePath, res, data = null) => {
   try {
-    const content = await fs.readFile(filePath, "utf-8");
+    let content = await fs.readFile(filePath, "utf-8");
+    if (data) {
+      const newsList = data
+        .map(
+          (article) => `
+        <div class="news-article">
+          <h2>${article.title}</h2>
+          <p><strong>Author:</strong> ${article.author}</p>
+          <img src="${article.urlToImage}" alt="${article.title}" />
+          <p><strong>Published At:</strong> ${article.publishedAt}</p>
+          <p>${article.content}</p>
+        </div>
+      `
+        )
+        .join("");
+      content = content.replace("{{news}}", newsList);
+    }
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end(content);
-    // myEmitter.emit("routeAccessed", filePath);
   } catch (error) {
     handleError(error, res);
   }
@@ -16,7 +32,14 @@ const fetchFile = async (filePath, res) => {
 
 const routes = {
   indexPage: (path, res) => fetchFile(path, res),
-  newsPage: (path, res) => fetchFile(path, res),
+  newsPage: async (path, res) => {
+    try {
+      const newsData = await getNews();
+      fetchFile(path, res, newsData);
+    } catch (error) {
+      handleError(error, res);
+    }
+  },
   sportsPage: (path, res) => fetchFile(path, res),
   weatherPage: (path, res) => fetchFile(path, res),
   jokesPage: (path, res) => fetchFile(path, res),
