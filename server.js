@@ -114,6 +114,18 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // API route for joke data
+  if (
+    req.url === "/jokes" &&
+    req.headers.accept &&
+    req.headers.accept.includes("application/json")
+  ) {
+    console.log("Fetching Joke Data...");
+
+    routes.randomJoke(req, res);
+    return;
+  }
+
   switch (req.url) {
     case "/":
       filePath = path.join(filePath, "index.html");
@@ -132,8 +144,13 @@ const server = http.createServer((req, res) => {
       routeHandler = routes.weatherPage;
       break;
     case "/jokes":
-      filePath = path.join(filePath, "jokes.html");
-      routeHandler = routes.jokesPage;
+      if (req.method === "GET") {
+        filePath = path.join(filePath, "jokes.html");
+        routeHandler = routes.jokesPage;
+      } else {
+        res.writeHead(405, { "Content-Type": "text/html" });
+        res.end("<h1>405 Method Not Allowed</h1>", "utf-8");
+      }
       break;
     default:
       res.writeHead(404, { "Content-Type": "text/html" });
