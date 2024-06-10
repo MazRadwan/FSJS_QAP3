@@ -1,4 +1,4 @@
-// --watch script enabled use npm start to run the server
+// --watch script enabled
 
 const server = require("./server");
 
