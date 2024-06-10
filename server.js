@@ -6,6 +6,7 @@ const myEmitter = require("./logEvents");
 const handleError = require("./errorHandler");
 const sportsService = require("./sportsService");
 const newsService = require("./newsService");
+const weatherService = require("./weatherService");
 
 global.DEBUG = true;
 
@@ -85,6 +86,31 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify(data));
     });
+    return;
+  }
+
+  // API route for weather data
+  if (req.url.startsWith("/api/weather")) {
+    console.log("Fetching Weather Data...");
+
+    const urlParams = new URLSearchParams(req.url.split("?")[1]);
+    const city = urlParams.get("city");
+
+    if (city) {
+      weatherService.getWeather(city, (err, data) => {
+        if (err) {
+          console.error("Error fetching weather data:", err);
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Failed to fetch weather data" }));
+        } else {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(data));
+        }
+      });
+    } else {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "City parameter is required" }));
+    }
     return;
   }
 
