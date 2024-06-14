@@ -2,8 +2,6 @@
 
 **QAP2 - A working web server with event logging**
 
-**NOTE: --watch script enabled so no need to keep re-starting the server**
-
 ## Build a multi-route http server.
 
 - request.url
